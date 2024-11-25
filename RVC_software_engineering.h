@@ -3,18 +3,25 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define ENABLE true
+#define DISABLE false
+
+#define FRONT 0
+#define LEFT 1
+#define RIGHT 2
+
 typedef enum{
-    POWER_UP_AND_MOVE_FORWARD,
     MOVE_FORWARD,
     MOVE_BACKWARD,
     TURN_LEFT,
     TURN_RIGHT,
+    HALTS,
 } cleanerMotion;
 
 typedef enum{
     POWER_UP = 5,
-    ON,
-    OFF,
+    POWER_ON,
+    POWER_OFF,
 } cleanerPowerOption;
 
 // initialize obstacles location and dust existence
@@ -26,60 +33,96 @@ bool dustExistence = false;
 
 // initialize motion and power option of RVC
 cleanerMotion motion = MOVE_FORWARD;
-cleanerPowerOption powerOption = ON;
+cleanerPowerOption power = ON;
 
 // generates random number in range
 int generateRandomNumberInRange(int lower, int upper) {
     return (rand() % (upper - lower + 1)) + lower;
 }
 
-void cleanerTurnLeft(){
-    powerOption = OFF;
+void turnLeftInterface(){
     motion = TURN_LEFT;
 }
-
-void cleanerTurnRight(){
-    powerOption = OFF;
+void turnRighttInterface(){
     motion = TURN_RIGHT;
 }
 
-void cleanerMoveBackward(){
-    powerOption = OFF;
+
+void moveBackwardInterface(){
     motion = MOVE_BACKWARD;
 }
-
-void cleanerEnableMoveForward(){
-    powerOption = ON;
-    motion = MOVE_FORWARD;
+void moveForwardInterface(bool enable){
+    if(enable) motion = MOVE_FORWARD;
+    else motion = HALTS;
 }
 
-// Each step of loop determines obstacles location
-// 0 determines front, 1 determines left, 2 determines right, respectively.
-
-void determineObstacleLocation(){
-    int i;
-    for(i = 0; i < 3; i++){
-        int obstacleExists = generateRandomNumberInRange(0, 1);
-        switch(i){
-            case 0:
-                if(obstacleExists) frontObstacle = true;
-                else frontObstacle = false;
-                break;
-            case 1:
-                if(obstacleExists) leftObstacle = true;
-                else leftObstacle = false;
-                break;
-            case 2:
-                if(obstacleExists) rightObstacle = true;
-                else rightObstacle = false;
-        }
-    }
+void powerUpInterface(){
+    power = POWER_UP;
+}
+void powerOnInterface(){
+    power = POWER_ON;
+}
+void powerOffInterface(){
+    power = POWER_OFF;
 }
 
-void determineDustExistence(){
-    int dustExists = generateRandomNumberInRange(0, 1);
-    if(dustExists) dustExistence = true;
-    else dustExistence = false;
+bool frontSensorInterface(){
+    return false;
+}
+bool leftSensorInterface(){
+    return false;
+}
+bool rightSensorInterface(){
+    return false;
+}
+bool dustSensorInterface(){
+    return false;
+}
+
+void turnLeft(){
+    moveForwardInterface(DISABLE);
+    powerOffInterface();
+    turnLeftInterface();
+}
+
+void turnRight(){
+    moveForwardInterface(DISABLE);
+    powerOffInterface();
+    turnRightInterface();
+}
+
+void moveBackward(){
+    moveForwardInterface(DISABLE);
+    powerOffInterface();
+    moveBackwardInterface();
+    turnLeft();
+}
+
+void moveForward(){
+    powerOnInterface();
+    moveForwardInterface(ENABLE);
+}
+void powerUpAndMoveForward(){
+    powerUpInterface();
+    moveForwardInterface(ENABLE);
+}
+
+
+
+// Determine obstacle locations
+
+bool* determineObstacleLocation(){
+    bool* obstacleLocations[3] = {false, };
+
+    if(frontSensorInterface()) obstacleLocations[FRONT] = true;
+    if(leftSensorInterface()) obstacleLocations[LEFT] = true;
+    if(rightSensorInterface()) obstacleLocations[RIGHT] = true;
+
+    return obstacleLocations;
+}
+
+bool determineDustExistence(){
+    return dustSensorInterface();
 }
 
 // A function that counts 5-ticks
@@ -87,7 +130,7 @@ void determineDustExistence(){
 // Else, it determines a location of obstacles at every step of the loop
 // then decide the next motion of RVC
 
-void tickFiveSeconds(bool obstaclesAreFixed){
+void tickFiveSeconds(bool obstaclesAreFixed, bool* obstacleLocations){
     int i;
     for(i = 0; i < 5; i++){
         if(obstaclesAreFixed){
@@ -95,17 +138,17 @@ void tickFiveSeconds(bool obstaclesAreFixed){
         }
         else{
             determineObstacleLocation();
-            if(frontObstacle && leftObstacle && !rightObstacle){
+            if(obstacleLocations[FRONT] && obstacleLocations[LEFT] && !obstacleLocations[RIGHT]){
                 cleanerTurnRight();
                 cleanerEnableMoveForward();
                 return;
             }
-            else if(frontObstacle && !leftObstacle && rightObstacle){
+            else if(obstacleLocations[FRONT] && !obstacleLocations[LEFT] && obstacleLocations[RIGHT]){
                 cleanerTurnLeft();
                 cleanerEnableMoveForward();
                 return;
             }
-            else if(frontObstacle && leftObstacle && rightObstacle){
+            else if(obstacleLocations[FRONT] && obstacleLocations[LEFT] && obstacleLocations[RIGHT]){
                 cleanerMoveBackward();
                 cleanerTurnLeft();
                 cleanerEnableMoveForward();
@@ -121,36 +164,30 @@ void tickFiveSeconds(bool obstaclesAreFixed){
 
 void controller(){
     while(true){
-        determineObstacleLocation();
-        //printf("%d %d %d\n", frontObstacle, leftObstacle, rightObstacle);
-        if(frontObstacle && leftObstacle && !rightObstacle){
-            cleanerTurnRight();
-            // tick-5.. and obstacles location is fixed
-            tickFiveSeconds(true);
-            cleanerEnableMoveForward();
+        bool obstacleLocations[3] = {false, };
+        bool dustExsitence = false;
+        obstacleLocations = determineObstacleLocation();
+        dustExistence = determineDustExistence();
+        if(dustExistence){
+            powerUpAndMoveForward();
         }
-        else if(frontObstacle && !leftObstacle && rightObstacle){
-            cleanerTurnLeft();
+        else if(obstacleLocations[FRONT]){
+            turnLeft();
             // tick-5.. and obstacles location is fixed
-            tickFiveSeconds(true);
-            cleanerEnableMoveForward();
+            //tickFiveSeconds(true);
         }
-        else if(frontObstacle && leftObstacle && rightObstacle){
-            cleanerMoveBackward();
+        else if(obstacleLocations[FRONT] && obstacleLocations[LEFT]){
+            turnRight();
+            // tick-5.. and obstacles location is fixed
+            //tickFiveSeconds(true);  
+        }
+        else if(obstacleLocations[FRONT] && obstacleLocations[LEFT] && obstacleLocations[RIGHT]){
+            moveBackward();
             // tick-5 .. and obstacles location is fixed
-            tickFiveSeconds(true);
-            cleanerTurnLeft();
-            // tick-5 .. and obstacles location is fixed
-            tickFiveSeconds(true);
-            cleanerEnableMoveForward();
+            //tickFiveSeconds(true);
+            turnLeft();
         }
         // Here we assume that cleaner's motion is fixed to move forward
-        determineDustExistence();
-        if(dustExistence){
-            powerOption = POWER_UP;
-            // tick-5.. obstacles location is not fixed
-            tickFiveSeconds(false);
-            powerOption = ON;
-        }
+        else moveForward();
     }
 }
