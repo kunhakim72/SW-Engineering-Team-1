@@ -1,14 +1,13 @@
 #include "RVC_software_engineering.h"
-#include <string.h>
 
 void describe(char* name, int expected, int result) {
   if (expected ==  result) {
-    printf("test for %s success", name);
+    printf("\033[1;32m[+] Test for %s success\033[0m\n", name);
     return;
   }
-  printf("test for %s failed\n", name);
-  printf("expected: %d", expected);
-  printf("result: %d", result);
+  printf("\033[1;31m[-] Test for %s failed\033[0m\n", name);
+  printf("\texpected: %d\n", expected);
+  printf("\tresult: %d\n", result);
 }
 
 void testTurnLeft() {
@@ -29,10 +28,12 @@ void testMoveBackward(){
   // 2. motion = move backward
 }
 
-void testEnableMoveForward(){
+void testMoveForward(){
   // 1. power option = on
   // 2. motion = move forward
 }
+
+// ---- 준필
 
 void testPowerUpAndMoveFoward() {
   // 1. power option = up
@@ -63,7 +64,7 @@ void testController() {
 }
 
 int main() {
-  testEnableMoveForward();
+  testMoveForward();
   testTurnLeft();
   testTurnRight();
   testMoveBackward();
