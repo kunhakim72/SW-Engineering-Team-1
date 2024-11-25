@@ -54,33 +54,126 @@ void testMoveForward() {
 }
 
 void testPowerUpAndMoveFoward() {
+  powerUpAndMoveFoward();
   // 1. power option = up
+  describe("call power up interface when power up and move forward", POWER_UP, power);
   // 2. motion = move forward
+  describe("call move foward interface when power up and move forward", true,
+           callMoveForwardInterface);
+  resetTestCondition();
 }
 
 void testDetermineObstacleLocation() {
-  determineObstacleLocation();
-  // 1. !L, !R, !F
-  // 2. L, !R, !F
-  // 3. !L, R, !F
-  // 4. !L, !R, F
-  // 5. L, R, !F
-  // 6. L, !R, F
-  // 7. !L, R, F
+  bool *obstacleLocations = (bool *)malloc(sizeof(bool) * 3);
+
+  // 1. !F, !L, !R 
+  setVenvObstaclesStatus(false, false, false); // front left right
+  obstacleLocations = determineObstacleLocation();
+  describe("call FRONT obstacle location on interface when determine obstacle location !F, !L, !R", venvFrontObstacle, obstacleLocations[FRONT]);
+  describe("call LEFT obstacle location on interface when determine obstacle location !F, !L, !R", venvLeftObstacle, obstacleLocations[LEFT]);
+  describe("call RIGHT obstacle location on interface when determine obstacle location !F, !L, !R", venvRightObstacle, obstacleLocations[RIGHT]);
+  resetTestCondition();
+
+  // 2. F, !L, !R 
+  setVenvObstaclesStatus(true, false, false); // front left right
+  obstacleLocations = determineObstacleLocation();
+  describe("call FRONT obstacle location on interface when determine obstacle location F, !L, !R", venvFrontObstacle, obstacleLocations[FRONT]);
+  describe("call LEFT obstacle location on interface when determine obstacle location F, !L, !R", venvLeftObstacle, obstacleLocations[LEFT]);
+  describe("call RIGHT obstacle location on interface when determine obstacle location F, !L, !R", venvRightObstacle, obstacleLocations[RIGHT]);
+  resetTestCondition();
+
+  // 3. !F, L, !R 
+  setVenvObstaclesStatus(false, true, false); // front left right
+  obstacleLocations = determineObstacleLocation();
+  describe("call FRONT obstacle location on interface when determine obstacle location !F, L, !R", venvFrontObstacle, obstacleLocations[FRONT]);
+  describe("call LEFT obstacle location on interface when determine obstacle location !F, L, !R", venvLeftObstacle, obstacleLocations[LEFT]);
+  describe("call RIGHT obstacle location on interface when determine obstacle location !F, L, !R", venvRightObstacle, obstacleLocations[RIGHT]);
+  resetTestCondition();
+
+  // 4. !F, !L, R 
+  setVenvObstaclesStatus(false, false, true); // front left right
+  obstacleLocations = determineObstacleLocation();
+  describe("call FRONT obstacle location on interface when determine obstacle location !F, !L, R", venvFrontObstacle, obstacleLocations[FRONT]);
+  describe("call LEFT obstacle location on interface when determine obstacle location !F, !L, R", venvLeftObstacle, obstacleLocations[LEFT]);
+  describe("call RIGHT obstacle location on interface when determine obstacle location !F, !L, R", venvRightObstacle, obstacleLocations[RIGHT]);
+  resetTestCondition();
+
+  // 5. F, L, !R 
+  setVenvObstaclesStatus(true, true, false); // front left right
+  obstacleLocations = determineObstacleLocation();
+  describe("call FRONT obstacle location on interface when determine obstacle location F, L, !R", venvFrontObstacle, obstacleLocations[FRONT]);
+  describe("call LEFT obstacle location on interface when determine obstacle location F, L, !R", venvLeftObstacle, obstacleLocations[LEFT]);
+  describe("call RIGHT obstacle location on interface when determine obstacle location F, L, !R", venvRightObstacle, obstacleLocations[RIGHT]);
+  resetTestCondition();
+
+  // 6. F, !L, R 
+  setVenvObstaclesStatus(true, false, true); // front left right
+  obstacleLocations = determineObstacleLocation();
+  describe("call FRONT obstacle location on interface when determine obstacle location F, !L, R", venvFrontObstacle, obstacleLocations[FRONT]);
+  describe("call LEFT obstacle location on interface when determine obstacle location F, !L, R", venvLeftObstacle, obstacleLocations[LEFT]);
+  describe("call RIGHT obstacle location on interface when determine obstacle location F, !L, R", venvRightObstacle, obstacleLocations[RIGHT]);
+  resetTestCondition();
+
+  // 7. !F, L, R 
+  setVenvObstaclesStatus(false, true, true); // front left right
+  obstacleLocations = determineObstacleLocation();
+  describe("call FRONT obstacle location on interface when determine obstacle location !F, L, R", venvFrontObstacle, obstacleLocations[FRONT]);
+  describe("call LEFT obstacle location on interface when determine obstacle location !F, L, R", venvLeftObstacle, obstacleLocations[LEFT]);
+  describe("call RIGHT obstacle location on interface when determine obstacle location !F, L, R", venvRightObstacle, obstacleLocations[RIGHT]);
+  resetTestCondition();
+
   // 8. L, F, R
+  setVenvObstaclesStatus(true, true, true); // front left right
+  obstacleLocations = determineObstacleLocation();
+  describe("call FRONT obstacle location on interface when determine obstacle location L, F, R", venvFrontObstacle, obstacleLocations[FRONT]);
+  describe("call LEFT obstacle location on interface when determine obstacle location L, F, R", venvLeftObstacle, obstacleLocations[LEFT]);
+  describe("call RIGHT obstacle location on interface when determine obstacle location L, F, R", venvRightObstacle, obstacleLocations[RIGHT]);
+  resetTestCondition();
 }
 
 void testDetermineDustExistence() {
   determineDustExistence();
   // 1. D
+  setVenvFrontDustStatus(true); // dust exists 
+  describe("call dustExistence on interface when dust exists", true, dustExistence);
   // 2. !D
+  setVenvFrontDustStatus(false); // dust doesn't exist
+  describe("call dustExistence on interface when dust doesn't exist", false, dustExistence);
+  resetTestCondition();
 }
 
 void testController() {
   // 1. F -> turnLeft
+  setVenvObstaclesStatus(true, false, false); // front left right
+  setVenvFrontDustStatus(false);
+  controller();
+  describe("call power off interface when turn left", POWER_OFF, power); // power option = off
+  describe("call turn left interface when turn left", true, callTurnLeftInterface);// motion = turn left
+  resetTestCondition();
+
   // 2. F, L -> turnRight
+  setVenvObstaclesStatus(true, true, false); // front left right
+  setVenvFrontDustStatus(false);
+  controller();
+  describe("call power off interface when turn right", POWER_OFF, power); // power option = off
+  describe("call turn right interface when turn right", true, callTurnRightInterface);// motion = turn right
+  resetTestCondition();
+
   // 3. F, L, R -> moveBackward
+  setVenvObstaclesStatus(true, true, true); // front left right
+  setVenvFrontDustStatus(false);
+  controller();
+  describe("call power off interface when move backward", POWER_OFF, power); // power option = off
+  describe("call move backward interface when move backward", true, callMoveBackwardInterface);// motion = move backward
+  resetTestCondition();
+
   // 4. D -> powerUp
+  setVenvObstaclesStatus(false, false, false); // front left right
+  setVenvFrontDustStatus(true);
+  controller();
+  describe("call power up interface when power up and move forward", POWER_UP, power); // power option = up
+  describe("call move foward interface when power up and move forward", true, callMoveForwardInterface);// motion = move forward
+  resetTestCondition();
 }
 
 int main() {

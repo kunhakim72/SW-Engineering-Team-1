@@ -1,3 +1,5 @@
+#include <venv.h>
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -74,10 +76,10 @@ void powerUpInterface() { power = POWER_UP; }
 void powerOnInterface() { power = POWER_ON; }
 void powerOffInterface() { power = POWER_OFF; }
 
-bool frontSensorInterface() { return false; }
-bool leftSensorInterface() { return false; }
-bool rightSensorInterface() { return false; }
-bool dustSensorInterface() { return false; }
+bool frontSensorInterface() { return venvFrontObstacle; }
+bool leftSensorInterface() { return venvLeftObstacle; }
+bool rightSensorInterface() { return venvRightObstacle; }
+bool dustSensorInterface() { return venvFrontDust; }
 
 void turnLeft() {
   for (int i = 0; i < 5; ++i) {
