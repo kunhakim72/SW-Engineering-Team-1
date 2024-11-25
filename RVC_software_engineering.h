@@ -183,10 +183,12 @@ void controller() {
     obstacleLocations = determineObstacleLocation();
     dustExistence = determineDustExistence();
 
-    if (obstacleLocations[FRONT]) {
+    if (obstacleLocations[FRONT] && !obstacleLocations[LEFT] &&
+        !obstacleLocations[RIGHT]) {
       tickCounter = 5;
       turnLeft();
-    } else if (obstacleLocations[FRONT] && obstacleLocations[LEFT]) {
+    } else if (obstacleLocations[FRONT] && obstacleLocations[LEFT] &&
+               !obstacleLocations[RIGHT]) {
       tickCounter = 5;
       turnRight();
     } else if (obstacleLocations[FRONT] && obstacleLocations[LEFT] &&
@@ -200,6 +202,7 @@ void controller() {
         tickCounter = 5;
       }
     } else {
+      tickCounter = 5;
       moveForward();
     }
     free(obstacleLocations);

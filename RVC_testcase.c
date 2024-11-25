@@ -259,8 +259,10 @@ int main() {
   testTurnRight();
   testMoveBackward();
   testPowerUpAndMoveFoward();
+
   testDetermineDustExistence();
   testDetermineObstacleLocation();
+
   testController();
 
   return 0;
