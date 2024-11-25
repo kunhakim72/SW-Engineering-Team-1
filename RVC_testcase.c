@@ -54,7 +54,7 @@ void testMoveForward() {
 }
 
 void testPowerUpAndMoveFoward() {
-  powerUpAndMoveFoward();
+  powerUpAndMoveForward();
   // 1. power option = up
   describe("call power up interface when power up and move forward", POWER_UP, power);
   // 2. motion = move forward
