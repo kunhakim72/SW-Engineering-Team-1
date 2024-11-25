@@ -154,9 +154,3 @@ void controller(){
         }
     }
 }
-
-int main() {
-    srand(time(NULL));
-    controller();
-    return 0;
-}
