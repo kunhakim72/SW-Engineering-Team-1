@@ -1,5 +1,4 @@
 #include "venv.h"
-
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,6 +25,7 @@ typedef enum {
   POWER_OFF,
 } cleanerPowerOption;
 
+bool isTesting = false;
 // initialize obstacles location and dust existence
 bool frontObstacle = false;
 bool leftObstacle = false;
@@ -37,7 +37,16 @@ bool callTurnLeftInterface = false;
 bool callTurnRightInterface = false;
 bool callMoveForwardInterface = false;
 bool callMoveBackwardInterface = false;
-bool callPowerUpAndMoveForwardInterface = false;
+
+bool callPowerOnInterface = false;
+bool callPowerOffInterface = false;
+bool callPowerUpInterface = false;
+
+bool callMoveForward = false;
+bool callTurnLeft = false;
+bool callTurnRight = false;
+bool callMoveBackward = false;
+bool callPowerUpAndMoveForward = false;
 
 // initialize motion and power option of RVC
 cleanerMotion motion = MOVE_FORWARD;
@@ -48,6 +57,15 @@ void resetTestCondition() {
   callMoveForwardInterface = false;
   callTurnLeftInterface = false;
   callTurnRightInterface = false;
+  callPowerOffInterface = false;
+  callPowerOnInterface = false;
+  callPowerUpInterface = false;
+
+  callPowerUpAndMoveForward = false;
+  callMoveForward = false;
+  callTurnRight = false;
+  callTurnLeft = false;
+  callMoveBackward = false;
 }
 
 void turnLeftInterface() {
@@ -72,9 +90,18 @@ void moveForwardInterface(bool enable) {
     motion = HALTS;
 }
 
-void powerUpInterface() { power = POWER_UP; }
-void powerOnInterface() { power = POWER_ON; }
-void powerOffInterface() { power = POWER_OFF; }
+void powerUpInterface() {
+  callPowerUpInterface = true;
+  power = POWER_UP;
+}
+void powerOnInterface() {
+  callPowerOnInterface = true;
+  power = POWER_ON;
+}
+void powerOffInterface() {
+  callPowerOffInterface = true;
+  power = POWER_OFF;
+}
 
 bool frontSensorInterface() { return venvFrontObstacle; }
 bool leftSensorInterface() { return venvLeftObstacle; }
@@ -82,6 +109,7 @@ bool rightSensorInterface() { return venvRightObstacle; }
 bool dustSensorInterface() { return venvFrontDust; }
 
 void turnLeft() {
+  callTurnLeft = true;
   for (int i = 0; i < 5; ++i) {
     moveForwardInterface(DISABLE);
     powerOffInterface();
@@ -90,6 +118,7 @@ void turnLeft() {
 }
 
 void turnRight() {
+  callTurnRight = true;
   for (int i = 0; i < 5; ++i) {
     moveForwardInterface(DISABLE);
     powerOffInterface();
@@ -98,6 +127,7 @@ void turnRight() {
 }
 
 void moveBackward() {
+  callMoveBackward = true;
   for (int i = 0; i < 5; ++i) {
     moveForwardInterface(DISABLE);
     powerOffInterface();
@@ -106,11 +136,13 @@ void moveBackward() {
 }
 
 void moveForward() {
+  callMoveForward = true;
   powerOnInterface();
   moveForwardInterface(ENABLE);
 }
 
 void powerUpAndMoveForward() {
+  callPowerUpAndMoveForward = true;
   powerUpInterface();
   moveForwardInterface(ENABLE);
 }
@@ -171,5 +203,9 @@ void controller() {
       moveForward();
     }
     free(obstacleLocations);
+
+    if (isTesting) {
+      break;
+    }
   }
 }
