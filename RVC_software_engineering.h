@@ -31,20 +31,39 @@ bool rightObstacle = false;
 
 bool dustExistence = false;
 
+bool callTurnLeftInterface = false;
+bool callTurnRightInterface = false;
+bool callMoveForwardInterface = false;
+bool callMoveBackwardInterface = false;
+bool callPowerUpAndMoveForwardInterface = false;
+
 // initialize motion and power option of RVC
 cleanerMotion motion = MOVE_FORWARD;
 cleanerPowerOption power = POWER_ON;
 
-// generates random number in range
-int generateRandomNumberInRange(int lower, int upper) {
-  return (rand() % (upper - lower + 1)) + lower;
+void resetTestCondition() {
+  callMoveBackwardInterface = false;
+  callMoveForwardInterface = false;
+  callTurnLeftInterface = false;
+  callTurnRightInterface = false;
 }
 
-void turnLeftInterface() { motion = TURN_LEFT; }
-void turnRightInterface() { motion = TURN_RIGHT; }
+void turnLeftInterface() {
+  callTurnLeftInterface = true;
+  motion = TURN_LEFT;
+}
+void turnRightInterface() {
+  callTurnRightInterface = true;
+  motion = TURN_RIGHT;
+}
 
-void moveBackwardInterface() { motion = MOVE_BACKWARD; }
+void moveBackwardInterface() {
+  callMoveBackwardInterface = true;
+  motion = MOVE_BACKWARD;
+}
+
 void moveForwardInterface(bool enable) {
+  callMoveForwardInterface = true;
   if (enable)
     motion = MOVE_FORWARD;
   else
@@ -61,35 +80,42 @@ bool rightSensorInterface() { return false; }
 bool dustSensorInterface() { return false; }
 
 void turnLeft() {
-  moveForwardInterface(DISABLE);
-  powerOffInterface();
-  turnLeftInterface();
+  for (int i = 0; i < 5; ++i) {
+    moveForwardInterface(DISABLE);
+    powerOffInterface();
+    turnLeftInterface();
+  }
 }
 
 void turnRight() {
-  moveForwardInterface(DISABLE);
-  powerOffInterface();
-  turnRightInterface();
+  for (int i = 0; i < 5; ++i) {
+    moveForwardInterface(DISABLE);
+    powerOffInterface();
+    turnRightInterface();
+  }
 }
 
 void moveBackward() {
-  moveForwardInterface(DISABLE);
-  powerOffInterface();
-  moveBackwardInterface();
-  turnLeft();
+  for (int i = 0; i < 5; ++i) {
+    moveForwardInterface(DISABLE);
+    powerOffInterface();
+    moveBackwardInterface();
+  }
 }
 
 void moveForward() {
   powerOnInterface();
   moveForwardInterface(ENABLE);
 }
+
 void powerUpAndMoveForward() {
   powerUpInterface();
   moveForwardInterface(ENABLE);
 }
 
-// Determine obstacle locations
-
+/**
+ * @brief Determine where the obstacles are.
+ */
 bool *determineObstacleLocation() {
   bool *obstacleLocations = (bool *)malloc(sizeof(bool) * 3);
 
@@ -103,44 +129,45 @@ bool *determineObstacleLocation() {
   return obstacleLocations;
 }
 
+/**
+ * @brief Determine the existence of dust.
+ */
 bool determineDustExistence() { return dustSensorInterface(); }
 
-// A function that counts 5-ticks
-// If a location of obstacles is fixed, it just loops 5 times and terminates
-// Else, it determines a location of obstacles at every step of the loop
-// then decide the next motion of RVC
-
-void tickFiveSeconds(bool obstaclesAreFixed, bool *obstacleLocations) {}
-
-// The main controller of RVC
-// Since we have decided that there is no branch to terminate the RVC after turn
-// it on, it infinitely loops
-
+/**
+ * @brief The main controller of RVC.
+ * @details Since we have decided that there is no branch to terminate the RVC
+ * after turn it on, it infinitely loops
+ */
 void controller() {
   while (true) {
     bool *obstacleLocations;
     bool dustExsitence = false;
+    bool freezeSensor = false;
+    int tickCounter = 5;
+
     obstacleLocations = determineObstacleLocation();
     dustExistence = determineDustExistence();
-    if (dustExistence) {
-      powerUpAndMoveForward();
-    } else if (obstacleLocations[FRONT]) {
+
+    if (obstacleLocations[FRONT]) {
+      tickCounter = 5;
       turnLeft();
-      // tick-5.. and obstacles location is fixed
-      // tickFiveSeconds(true);
     } else if (obstacleLocations[FRONT] && obstacleLocations[LEFT]) {
+      tickCounter = 5;
       turnRight();
-      // tick-5.. and obstacles location is fixed
-      // tickFiveSeconds(true);
     } else if (obstacleLocations[FRONT] && obstacleLocations[LEFT] &&
                obstacleLocations[RIGHT]) {
+      tickCounter = 5;
       moveBackward();
-      // tick-5 .. and obstacles location is fixed
-      // tickFiveSeconds(true);
       turnLeft();
-    }
-    // Here we assume that cleaner's motion is fixed to move forward
-    else
+    } else if (dustExistence || tickCounter != 5) {
+      powerUpAndMoveForward();
+      if (--tickCounter == 0) {
+        tickCounter = 5;
+      }
+    } else {
       moveForward();
+    }
+    free(obstacleLocations);
   }
 }
