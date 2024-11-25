@@ -88,9 +88,9 @@ void testDetermineObstacleLocation() {
   obstacleLocations = determineObstacleLocation();
   describe("front obstacle is true when sensor input is F, !L, !R", true,
            obstacleLocations[FRONT]);
-  describe("front obstacle is false when sensor input is F, !L, !R", false,
+  describe("left obstacle is false when sensor input is F, !L, !R", false,
            obstacleLocations[LEFT]);
-  describe("front obstacle is false when sensor input is F, !L, !R", false,
+  describe("right obstacle is false when sensor input is F, !L, !R", false,
            obstacleLocations[RIGHT]);
   resetTestCondition();
 
@@ -99,9 +99,9 @@ void testDetermineObstacleLocation() {
   obstacleLocations = determineObstacleLocation();
   describe("front obstacle is false when sensor input is !F, L, !R", false,
            obstacleLocations[FRONT]);
-  describe("front obstacle is true when sensor input is !F, L, !R", true,
+  describe("left obstacle is true when sensor input is !F, L, !R", true,
            obstacleLocations[LEFT]);
-  describe("front obstacle is false when sensor input is !F, L, !R", false,
+  describe("right obstacle is false when sensor input is !F, L, !R", false,
            obstacleLocations[RIGHT]);
   resetTestCondition();
 
@@ -110,9 +110,9 @@ void testDetermineObstacleLocation() {
   obstacleLocations = determineObstacleLocation();
   describe("front obstacle is false when sensor input is !F, !L, R", false,
            obstacleLocations[FRONT]);
-  describe("front obstacle is false when sensor input is !F, !L, R", false,
+  describe("left obstacle is false when sensor input is !F, !L, R", false,
            obstacleLocations[LEFT]);
-  describe("front obstacle is true when sensor input is !F, !L, R", true,
+  describe("right obstacle is true when sensor input is !F, !L, R", true,
            obstacleLocations[RIGHT]);
   resetTestCondition();
 
