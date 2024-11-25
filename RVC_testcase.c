@@ -1,21 +1,35 @@
 #include "RVC_software_engineering.h"
+#include <string.h>
 
-void testCleanerTurnLeft() {
-  // 1. power option = off
-  // 2. motion = turn left
+void describe(char* name, int expected, int result) {
+  if (expected ==  result) {
+    printf("test for %s success", name);
+    return;
+  }
+  printf("test for %s failed\n", name);
+  printf("expected: %d", expected);
+  printf("result: %d", result);
 }
 
-void testCleanerTurnRight(){
+void testTurnLeft() {
+  turnLeft();
+  // 1. power option = off
+  describe("call power off interface when turn left", POWER_OFF, power);
+  // 2. motion = turn left
+  describe("call turn left interface when turn left", TURN_LEFT, motion);
+}
+
+void testTurnRight(){
   // 1. power option = off
   // 2. motion = turn right
 }
 
-void testCleanerMoveBackward(){
+void testMoveBackward(){
   // 1. power option = off
   // 2. motion = move backward
 }
 
-void testCleanerEnableMoveForward(){
+void testEnableMoveForward(){
   // 1. power option = on
   // 2. motion = move forward
 }
@@ -49,10 +63,10 @@ void testController() {
 }
 
 int main() {
-  testCleanerEnableMoveForward();
-  testCleanerTurnLeft();
-  testCleanerTurnRight();
-  testCleanerMoveBackward();
+  testEnableMoveForward();
+  testTurnLeft();
+  testTurnRight();
+  testMoveBackward();
   testPowerUpAndMoveFoward();
   testDetermineDustExistence();
   testDetermineObstacleLocation();
@@ -60,5 +74,6 @@ int main() {
       
   return 0;
 }
+
 
 
