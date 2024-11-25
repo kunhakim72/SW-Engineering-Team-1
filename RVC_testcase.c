@@ -69,107 +69,96 @@ void testPowerUpAndMoveFoward() {
   resetTestCondition();
 }
 
+
 void testDetermineObstacleLocation() {
   bool *obstacleLocations = (bool *)malloc(sizeof(bool) * 3);
 
   // 1. !F, !L, !R
   setVenvObstaclesStatus(false, false, false); // front left right
   obstacleLocations = determineObstacleLocation();
-  describe("front obstacle is false when sensor input is !F, !L, !R", false,
-           obstacleLocations[FRONT]);
-  describe("left obstacle is false when sensor input is !F, !L, !R", false,
-           obstacleLocations[LEFT]);
-  describe("right obstacle is false when sensor input is !F, !L, !R", false,
-           obstacleLocations[RIGHT]);
+  describe("front obstacle is false when sensor input is !F, !L, !R",
+           false, obstacleLocations[FRONT]);
+  describe("left obstacle is false when sensor input is !F, !L, !R",
+           false, obstacleLocations[LEFT]);
+  describe("right obstacle is false when sensor input is !F, !L, !R",
+           false, obstacleLocations[RIGHT]);
   resetTestCondition();
 
   // 2. F, !L, !R
   setVenvObstaclesStatus(true, false, false); // front left right
   obstacleLocations = determineObstacleLocation();
-  describe("front obstacle is true when sensor input is F, !L, !R", true,
-           obstacleLocations[FRONT]);
-  describe("left obstacle is false when sensor input is F, !L, !R", false,
-           obstacleLocations[LEFT]);
-  describe("right obstacle is false when sensor input is F, !L, !R", false,
-           obstacleLocations[RIGHT]);
+  describe("front obstacle is true when sensor input is F, !L, !R",
+           true, obstacleLocations[FRONT]);
+  describe("left obstacle is false when sensor input is F, !L, !R",
+           false, obstacleLocations[LEFT]);
+  describe("right obstacle is false when sensor input is F, !L, !R",
+           false, obstacleLocations[RIGHT]);
   resetTestCondition();
 
   // 3. !F, L, !R
   setVenvObstaclesStatus(false, true, false); // front left right
   obstacleLocations = determineObstacleLocation();
-  describe("front obstacle is false when sensor input is !F, L, !R", false,
-           obstacleLocations[FRONT]);
-  describe("left obstacle is true when sensor input is !F, L, !R", true,
-           obstacleLocations[LEFT]);
-  describe("right obstacle is false when sensor input is !F, L, !R", false,
-           obstacleLocations[RIGHT]);
+  describe("front obstacle is false when sensor input is !F, L, !R",
+           false, obstacleLocations[FRONT]);
+  describe("left obstacle is true when sensor input is !F, L, !R",
+           true, obstacleLocations[LEFT]);
+  describe("right obstacle is false when sensor input is !F, L, !R",
+           false, obstacleLocations[RIGHT]);
   resetTestCondition();
 
   // 4. !F, !L, R
   setVenvObstaclesStatus(false, false, true); // front left right
   obstacleLocations = determineObstacleLocation();
-  describe("front obstacle is false when sensor input is !F, !L, R", false,
-           obstacleLocations[FRONT]);
-  describe("left obstacle is false when sensor input is !F, !L, R", false,
-           obstacleLocations[LEFT]);
-  describe("right obstacle is true when sensor input is !F, !L, R", true,
-           obstacleLocations[RIGHT]);
+  describe("front obstacle is false when sensor input is !F, !L, R",
+           false, obstacleLocations[FRONT]);
+  describe("left obstacle is false when sensor input is !F, !L, R",
+           false, obstacleLocations[LEFT]);
+  describe("right obstacle is true when sensor input is !F, !L, R",
+           true, obstacleLocations[RIGHT]);
   resetTestCondition();
 
   // 5. F, L, !R
   setVenvObstaclesStatus(true, true, false); // front left right
   obstacleLocations = determineObstacleLocation();
-  describe("call FRONT obstacle location on interface when determine obstacle "
-           "location F, L, !R",
-           venvFrontObstacle, obstacleLocations[FRONT]);
-  describe("call LEFT obstacle location on interface when determine obstacle "
-           "location F, L, !R",
-           venvLeftObstacle, obstacleLocations[LEFT]);
-  describe("call RIGHT obstacle location on interface when determine obstacle "
-           "location F, L, !R",
-           venvRightObstacle, obstacleLocations[RIGHT]);
+  describe("front obstacle is true when sensor input is F, L, !R",
+           true, obstacleLocations[FRONT]);
+  describe("left obstacle is true when sensor input is F, L, !R",
+           true, obstacleLocations[LEFT]);
+  describe("right obstacle is false when sensor input is F, L, !R",
+           false, obstacleLocations[RIGHT]);
   resetTestCondition();
 
   // 6. F, !L, R
   setVenvObstaclesStatus(true, false, true); // front left right
   obstacleLocations = determineObstacleLocation();
-  describe("call FRONT obstacle location on interface when determine obstacle "
-           "location F, !L, R",
-           venvFrontObstacle, obstacleLocations[FRONT]);
-  describe("call LEFT obstacle location on interface when determine obstacle "
-           "location F, !L, R",
-           venvLeftObstacle, obstacleLocations[LEFT]);
-  describe("call RIGHT obstacle location on interface when determine obstacle "
-           "location F, !L, R",
-           venvRightObstacle, obstacleLocations[RIGHT]);
+  describe("front obstacle is true when sensor input is F, !L, R",
+           true, obstacleLocations[FRONT]);
+  describe("left obstacle is false when sensor input is F, !L, R",
+           false, obstacleLocations[LEFT]);
+  describe("right obstacle is true when sensor input is F, !L, R",
+           true, obstacleLocations[RIGHT]);
   resetTestCondition();
 
   // 7. !F, L, R
   setVenvObstaclesStatus(false, true, true); // front left right
   obstacleLocations = determineObstacleLocation();
-  describe("call FRONT obstacle location on interface when determine obstacle "
-           "location !F, L, R",
-           venvFrontObstacle, obstacleLocations[FRONT]);
-  describe("call LEFT obstacle location on interface when determine obstacle "
-           "location !F, L, R",
-           venvLeftObstacle, obstacleLocations[LEFT]);
-  describe("call RIGHT obstacle location on interface when determine obstacle "
-           "location !F, L, R",
-           venvRightObstacle, obstacleLocations[RIGHT]);
+  describe("front obstacle is false when sensor input is !F, L, R",
+           false, obstacleLocations[FRONT]);
+  describe("left obstacle is true when sensor input is !F, L, R",
+           true, obstacleLocations[LEFT]);
+  describe("right obstacle is true when sensor input is !F, L, R",
+           true, obstacleLocations[RIGHT]);
   resetTestCondition();
 
-  // 8. L, F, R
+  // 8. F, L, R
   setVenvObstaclesStatus(true, true, true); // front left right
   obstacleLocations = determineObstacleLocation();
-  describe("call FRONT obstacle location on interface when determine obstacle "
-           "location L, F, R",
-           venvFrontObstacle, obstacleLocations[FRONT]);
-  describe("call LEFT obstacle location on interface when determine obstacle "
-           "location L, F, R",
-           venvLeftObstacle, obstacleLocations[LEFT]);
-  describe("call RIGHT obstacle location on interface when determine obstacle "
-           "location L, F, R",
-           venvRightObstacle, obstacleLocations[RIGHT]);
+  describe("front obstacle is true when sensor input is F, L, R",
+           true, obstacleLocations[FRONT]);
+  describe("left obstacle is true when sensor input is F, L, R",
+           true, obstacleLocations[LEFT]);
+  describe("right obstacle is true when sensor input is F, L, R",
+           true, obstacleLocations[RIGHT]);
   resetTestCondition();
 
   free(obstacleLocations);
