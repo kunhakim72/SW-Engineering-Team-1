@@ -9,80 +9,66 @@ int clean_suite(void) { return 0; }
 // 테스트 케이스 함수
 
 void testTurnLeftPowerOff(void) {
-    turnLeft();
-    CU_ASSERT_EQUAL(callPowerOffInterface, true);
-    resetTestCondition();
+  turnLeft();
+  CU_ASSERT_EQUAL(callPowerOffInterface, true);
+  resetTestCondition();
 }
 
 void testTurnLeftInterface(void) {
-    turnLeft();
-    CU_ASSERT_EQUAL(callTurnLeftInterface, true);
-    resetTestCondition();
+  turnLeft();
+  CU_ASSERT_EQUAL(callTurnLeftInterface, true);
+  resetTestCondition();
 }
 
 void testTurnRightPowerOff(void) {
-    turnRight();
-    CU_ASSERT_EQUAL(callPowerOffInterface, true);
-    resetTestCondition();
+  turnRight();
+  CU_ASSERT_EQUAL(callPowerOffInterface, true);
+  resetTestCondition();
 }
 
 void testTurnRightInterface(void) {
-    turnRight();
-    CU_ASSERT_EQUAL(callTurnRightInterface, true);
-    resetTestCondition();
+  turnRight();
+  CU_ASSERT_EQUAL(callTurnRightInterface, true);
+  resetTestCondition();
 }
 
 void testMoveBackwardPowerOff(void) {
-    moveBackward();
-    CU_ASSERT_EQUAL(callPowerOffInterface, true);
-    resetTestCondition();
+  moveBackward();
+  CU_ASSERT_EQUAL(callPowerOffInterface, true);
+  resetTestCondition();
 }
 
 void testMoveBackwardInterface(void) {
-    moveBackward();
-    CU_ASSERT_EQUAL(callMoveBackwardInterface, true);
-    resetTestCondition();
+  moveBackward();
+  CU_ASSERT_EQUAL(callMoveBackwardInterface, true);
+  resetTestCondition();
 }
 
-void testMoveForwardPowerOn(void) {
-    moveForward();
-    CU_ASSERT_EQUAL(callPowerOnInterface, true);
-    resetTestCondition();
-}
-
-void testMoveForwardInterface(void) {
-    moveForward();
-    CU_ASSERT_EQUAL(callMoveForwardInterface, true);
-    resetTestCondition();
-}
-
-void testPowerUpAndMoveForwardPowerUp(void) {
-    powerUpAndMoveForward();
-    CU_ASSERT_EQUAL(callPowerUpInterface, true);
-    resetTestCondition();
-}
-
-void testPowerUpAndMoveForwardInterface(void) {
-    powerUpAndMoveForward();
-    CU_ASSERT_EQUAL(callMoveForwardInterface, true);
-    resetTestCondition();
-}
-
-void testMoveForward(void) {
+void testMoveForwardCleaner(void) {
   moveForward();
   CU_ASSERT_EQUAL(callPowerOnInterface, true);
+  resetTestCondition();
+}
+
+void testMoveForwardMotor(void) {
+  moveForward();
   CU_ASSERT_EQUAL(callMoveForwardInterface, true);
   resetTestCondition();
 }
 
-void testPowerUpAndMoveForward(void) {
+void testPowerUpAndMoveForwardCleaner(void) {
   powerUpAndMoveForward();
   CU_ASSERT_EQUAL(callPowerUpInterface, true);
+  resetTestCondition();
+}
+
+void testPowerUpAndMoveForwardMotor(void) {
+  powerUpAndMoveForward();
   CU_ASSERT_EQUAL(callMoveForwardInterface, true);
   resetTestCondition();
 }
 
-void testDetermineObstacleLocation(void) {
+void testDetermineObstacleLocationNoObstacles(void) {
   bool *obstacleLocations;
 
   setVenvObstaclesStatus(false, false, false);
@@ -90,14 +76,59 @@ void testDetermineObstacleLocation(void) {
   CU_ASSERT_EQUAL(obstacleLocations[FRONT], false);
   CU_ASSERT_EQUAL(obstacleLocations[LEFT], false);
   CU_ASSERT_EQUAL(obstacleLocations[RIGHT], false);
+
   resetTestCondition();
   free(obstacleLocations);
+}
+
+void testDetermineObstacleLocationFrontObstacle(void) {
+  bool *obstacleLocations;
 
   setVenvObstaclesStatus(true, false, false);
   obstacleLocations = determineObstacleLocation();
   CU_ASSERT_EQUAL(obstacleLocations[FRONT], true);
   CU_ASSERT_EQUAL(obstacleLocations[LEFT], false);
   CU_ASSERT_EQUAL(obstacleLocations[RIGHT], false);
+
+  resetTestCondition();
+  free(obstacleLocations);
+}
+
+void testDetermineObstacleLocationLeftObstacle(void) {
+  bool *obstacleLocations;
+
+  setVenvObstaclesStatus(false, true, false);
+  obstacleLocations = determineObstacleLocation();
+  CU_ASSERT_EQUAL(obstacleLocations[FRONT], false);
+  CU_ASSERT_EQUAL(obstacleLocations[LEFT], true);
+  CU_ASSERT_EQUAL(obstacleLocations[RIGHT], false);
+
+  resetTestCondition();
+  free(obstacleLocations);
+}
+
+void testDetermineObstacleLocationRightObstacle(void) {
+  bool *obstacleLocations;
+
+  setVenvObstaclesStatus(false, false, true);
+  obstacleLocations = determineObstacleLocation();
+  CU_ASSERT_EQUAL(obstacleLocations[FRONT], false);
+  CU_ASSERT_EQUAL(obstacleLocations[LEFT], false);
+  CU_ASSERT_EQUAL(obstacleLocations[RIGHT], true);
+
+  resetTestCondition();
+  free(obstacleLocations);
+}
+
+void testDetermineObstacleLocationAllObstacles(void) {
+  bool *obstacleLocations;
+
+  setVenvObstaclesStatus(true, true, true);
+  obstacleLocations = determineObstacleLocation();
+  CU_ASSERT_EQUAL(obstacleLocations[FRONT], true);
+  CU_ASSERT_EQUAL(obstacleLocations[LEFT], true);
+  CU_ASSERT_EQUAL(obstacleLocations[RIGHT], true);
+
   resetTestCondition();
   free(obstacleLocations);
 }
@@ -159,34 +190,37 @@ int main() {
   if (CU_initialize_registry() != CUE_SUCCESS)
     return CU_get_error();
 
-  
-    // Turn Left Suite
-    CU_pSuite suiteTurnLeft = CU_add_suite("Suite_TurnLeft", init_suite, clean_suite);
-    if (!suiteTurnLeft) {
-        CU_cleanup_registry();
-        return CU_get_error();
-    }
-    CU_add_test(suiteTurnLeft, "Test TurnLeft PowerOff", testTurnLeftPowerOff);
-    CU_add_test(suiteTurnLeft, "Test TurnLeft Interface", testTurnLeftInterface);
+  // Turn Left Suite
+  CU_pSuite suiteTurnLeft =
+      CU_add_suite("Suite_TurnLeft", init_suite, clean_suite);
+  if (!suiteTurnLeft) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
+  CU_add_test(suiteTurnLeft, "TurnLeft PowerOff", testTurnLeftPowerOff);
+  CU_add_test(suiteTurnLeft, "TurnLeft motor", testTurnLeftInterface);
 
-    // Turn Right Suite
-    CU_pSuite suiteTurnRight = CU_add_suite("Suite_TurnRight", init_suite, clean_suite);
-    if (!suiteTurnRight) {
-        CU_cleanup_registry();
-        return CU_get_error();
-    }
-    CU_add_test(suiteTurnRight, "Test TurnRight PowerOff", testTurnRightPowerOff);
-    CU_add_test(suiteTurnRight, "Test TurnRight Interface", testTurnRightInterface);
+  // Turn Right Suite
+  CU_pSuite suiteTurnRight =
+      CU_add_suite("Suite_TurnRight", init_suite, clean_suite);
+  if (!suiteTurnRight) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
+  CU_add_test(suiteTurnRight, "TurnRight PowerOff", testTurnRightPowerOff);
+  CU_add_test(suiteTurnRight, "TurnRight motor", testTurnRightInterface);
 
-    // Move Backward Suite
-    CU_pSuite suiteMoveBackward = CU_add_suite("Suite_MoveBackward", init_suite, clean_suite);
-    if (!suiteMoveBackward) {
-        CU_cleanup_registry();
-        return CU_get_error();
-    }
-    CU_add_test(suiteMoveBackward, "Test MoveBackward PowerOff", testMoveBackwardPowerOff);
-    CU_add_test(suiteMoveBackward, "Test MoveBackward Interface", testMoveBackwardInterface);
-
+  // Move Backward Suite
+  CU_pSuite suiteMoveBackward =
+      CU_add_suite("Suite_MoveBackward", init_suite, clean_suite);
+  if (!suiteMoveBackward) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
+  CU_add_test(suiteMoveBackward, "MoveBackward PowerOff",
+              testMoveBackwardPowerOff);
+  CU_add_test(suiteMoveBackward, "MoveBackward motor",
+              testMoveBackwardInterface);
 
   CU_pSuite suiteMoveForward =
       CU_add_suite("Suite_MoveForward", init_suite, clean_suite);
@@ -194,8 +228,13 @@ int main() {
     CU_cleanup_registry();
     return CU_get_error();
   }
-  if (CU_add_test(suiteMoveForward, "test of moveForward", testMoveForward) ==
-      NULL) {
+  if (CU_add_test(suiteMoveForward, "Moveforward PowerOn",
+                  testMoveForwardCleaner) == NULL) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
+  if (CU_add_test(suiteMoveForward, "Moveforward motor",
+                  testMoveForwardMotor) == NULL) {
     CU_cleanup_registry();
     return CU_get_error();
   }
@@ -206,8 +245,13 @@ int main() {
     CU_cleanup_registry();
     return CU_get_error();
   }
-  if (CU_add_test(suitePowerUpAndMoveForward, "test of powerUpAndMoveForward",
-                  testPowerUpAndMoveForward) == NULL) {
+  if (CU_add_test(suitePowerUpAndMoveForward, "powerUpAndMoveForward PowerUp",
+                  testPowerUpAndMoveForwardCleaner) == NULL) {
+    CU_cleanup_registry();
+    return CU_get_error();
+  }
+  if (CU_add_test(suitePowerUpAndMoveForward, "powerUpAndMoveForward motor",
+                  testPowerUpAndMoveForwardMotor) == NULL) {
     CU_cleanup_registry();
     return CU_get_error();
   }
@@ -218,9 +262,16 @@ int main() {
     CU_cleanup_registry();
     return CU_get_error();
   }
-  if (CU_add_test(suiteDetermineObstacleLocation,
-                  "test of determineObstacleLocation",
-                  testDetermineObstacleLocation) == NULL) {
+  if ((CU_add_test(suiteDetermineObstacleLocation, "No Obstacles",
+                   testDetermineObstacleLocationNoObstacles) == NULL) ||
+      (CU_add_test(suiteDetermineObstacleLocation, "Front Obstacle",
+                   testDetermineObstacleLocationFrontObstacle) == NULL) ||
+      (CU_add_test(suiteDetermineObstacleLocation, "Left Obstacle",
+                   testDetermineObstacleLocationLeftObstacle) == NULL) ||
+      (CU_add_test(suiteDetermineObstacleLocation, "Right Obstacle",
+                   testDetermineObstacleLocationRightObstacle) == NULL) ||
+      (CU_add_test(suiteDetermineObstacleLocation, "All Obstacles",
+                   testDetermineObstacleLocationAllObstacles) == NULL)) {
     CU_cleanup_registry();
     return CU_get_error();
   }
@@ -232,10 +283,10 @@ int main() {
     return CU_get_error();
   }
   if ((CU_add_test(suiteDetermineDustExistence,
-                   "Test Dust Existence When Dust Is Present",
+                   "Dust Existence When Dust Is Present",
                    testDetermineDustExistenceWhenDustIsPresent) == NULL) ||
       (CU_add_test(suiteDetermineDustExistence,
-                   "Test Dust Existence When No Dust Is Present",
+                   "Dust Existence When No Dust Is Present",
                    testDetermineDustExistenceWhenNoDustIsPresent) == NULL)) {
     CU_cleanup_registry();
     return CU_get_error();
@@ -243,17 +294,17 @@ int main() {
 
   CU_pSuite suiteController =
       CU_add_suite("Suite_Controller", init_suite, clean_suite);
-  if ((CU_add_test(suiteController, "Test Controller Turn Left Decision",
+  if ((CU_add_test(suiteController, "Controller Turn Left Decision",
                    testControllerTurnLeftDecision) == NULL) ||
-      (CU_add_test(suiteController, "Test Controller Turn Right Decision",
+      (CU_add_test(suiteController, "Controller Turn Right Decision",
                    testControllerTurnRightDecision) == NULL) ||
       (CU_add_test(suiteController,
-                   "Test Controller Move Backward and Turn Left Decision",
+                   "Controller Move Backward and Turn Left Decision",
                    testControllerMoveBackwardAndTurnLeftDecision) == NULL) ||
       (CU_add_test(suiteController,
-                   "Test Controller Power Up and Move Forward Decision",
+                   "Controller Power Up and Move Forward Decision",
                    testControllerPowerUpAndMoveForwardDecision) == NULL) ||
-      (CU_add_test(suiteController, "Test Controller Move Forward Decision",
+      (CU_add_test(suiteController, "Controller Move Forward Decision",
                    testControllerMoveForwardDecision) == NULL)) {
     CU_cleanup_registry();
     return CU_get_error();

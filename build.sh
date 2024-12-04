@@ -7,3 +7,5 @@ elif [[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" ]]; then
 else
   echo "Unknown OS"
 fi
+
+./run.sh
