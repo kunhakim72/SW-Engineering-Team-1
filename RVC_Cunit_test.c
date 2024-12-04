@@ -7,25 +7,65 @@ int init_suite(void) { return 0; }
 int clean_suite(void) { return 0; }
 
 // 테스트 케이스 함수
-void testTurnLeft(void) {
-  turnLeft();
-  CU_ASSERT_EQUAL(callPowerOffInterface, true);
-  CU_ASSERT_EQUAL(callTurnLeftInterface, true);
-  resetTestCondition();
+
+void testTurnLeftPowerOff(void) {
+    turnLeft();
+    CU_ASSERT_EQUAL(callPowerOffInterface, true);
+    resetTestCondition();
 }
 
-void testTurnRight(void) {
-  turnRight();
-  CU_ASSERT_EQUAL(callPowerOffInterface, true);
-  CU_ASSERT_EQUAL(callTurnRightInterface, true);
-  resetTestCondition();
+void testTurnLeftInterface(void) {
+    turnLeft();
+    CU_ASSERT_EQUAL(callTurnLeftInterface, true);
+    resetTestCondition();
 }
 
-void testMoveBackward(void) {
-  moveBackward();
-  CU_ASSERT_EQUAL(callPowerOffInterface, true);
-  CU_ASSERT_EQUAL(callMoveBackwardInterface, true);
-  resetTestCondition();
+void testTurnRightPowerOff(void) {
+    turnRight();
+    CU_ASSERT_EQUAL(callPowerOffInterface, true);
+    resetTestCondition();
+}
+
+void testTurnRightInterface(void) {
+    turnRight();
+    CU_ASSERT_EQUAL(callTurnRightInterface, true);
+    resetTestCondition();
+}
+
+void testMoveBackwardPowerOff(void) {
+    moveBackward();
+    CU_ASSERT_EQUAL(callPowerOffInterface, true);
+    resetTestCondition();
+}
+
+void testMoveBackwardInterface(void) {
+    moveBackward();
+    CU_ASSERT_EQUAL(callMoveBackwardInterface, true);
+    resetTestCondition();
+}
+
+void testMoveForwardPowerOn(void) {
+    moveForward();
+    CU_ASSERT_EQUAL(callPowerOnInterface, true);
+    resetTestCondition();
+}
+
+void testMoveForwardInterface(void) {
+    moveForward();
+    CU_ASSERT_EQUAL(callMoveForwardInterface, true);
+    resetTestCondition();
+}
+
+void testPowerUpAndMoveForwardPowerUp(void) {
+    powerUpAndMoveForward();
+    CU_ASSERT_EQUAL(callPowerUpInterface, true);
+    resetTestCondition();
+}
+
+void testPowerUpAndMoveForwardInterface(void) {
+    powerUpAndMoveForward();
+    CU_ASSERT_EQUAL(callMoveForwardInterface, true);
+    resetTestCondition();
 }
 
 void testMoveForward(void) {
@@ -109,40 +149,34 @@ int main() {
   if (CU_initialize_registry() != CUE_SUCCESS)
     return CU_get_error();
 
-  // 각 함수에 대해 별도의 스위트 추가
-  CU_pSuite suiteTurnLeft =
-      CU_add_suite("Suite_TurnLeft", init_suite, clean_suite);
-  if (suiteTurnLeft == NULL) {
-    CU_cleanup_registry();
-    return CU_get_error();
-  }
-  if (CU_add_test(suiteTurnLeft, "test of turnLeft", testTurnLeft) == NULL) {
-    CU_cleanup_registry();
-    return CU_get_error();
-  }
+  
+    // Turn Left Suite
+    CU_pSuite suiteTurnLeft = CU_add_suite("Suite_TurnLeft", init_suite, clean_suite);
+    if (!suiteTurnLeft) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+    CU_add_test(suiteTurnLeft, "Test TurnLeft PowerOff", testTurnLeftPowerOff);
+    CU_add_test(suiteTurnLeft, "Test TurnLeft Interface", testTurnLeftInterface);
 
-  CU_pSuite suiteTurnRight =
-      CU_add_suite("Suite_TurnRight", init_suite, clean_suite);
-  if (suiteTurnRight == NULL) {
-    CU_cleanup_registry();
-    return CU_get_error();
-  }
-  if (CU_add_test(suiteTurnRight, "test of turnRight", testTurnRight) == NULL) {
-    CU_cleanup_registry();
-    return CU_get_error();
-  }
+    // Turn Right Suite
+    CU_pSuite suiteTurnRight = CU_add_suite("Suite_TurnRight", init_suite, clean_suite);
+    if (!suiteTurnRight) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+    CU_add_test(suiteTurnRight, "Test TurnRight PowerOff", testTurnRightPowerOff);
+    CU_add_test(suiteTurnRight, "Test TurnRight Interface", testTurnRightInterface);
 
-  CU_pSuite suiteMoveBackward =
-      CU_add_suite("Suite_MoveBackward", init_suite, clean_suite);
-  if (suiteMoveBackward == NULL) {
-    CU_cleanup_registry();
-    return CU_get_error();
-  }
-  if (CU_add_test(suiteMoveBackward, "test of moveBackward",
-                  testMoveBackward) == NULL) {
-    CU_cleanup_registry();
-    return CU_get_error();
-  }
+    // Move Backward Suite
+    CU_pSuite suiteMoveBackward = CU_add_suite("Suite_MoveBackward", init_suite, clean_suite);
+    if (!suiteMoveBackward) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+    CU_add_test(suiteMoveBackward, "Test MoveBackward PowerOff", testMoveBackwardPowerOff);
+    CU_add_test(suiteMoveBackward, "Test MoveBackward Interface", testMoveBackwardInterface);
+
 
   CU_pSuite suiteMoveForward =
       CU_add_suite("Suite_MoveForward", init_suite, clean_suite);
