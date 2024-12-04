@@ -62,42 +62,52 @@ void testDetermineObstacleLocation(void) {
   free(obstacleLocations);
 }
 
-void testDetermineDustExistence(void) {
+void testDetermineDustExistenceWhenDustIsPresent(void) {
   setVenvFrontDustStatus(true);
   CU_ASSERT_EQUAL(determineDustExistence(), true);
   resetTestCondition();
+}
 
+void testDetermineDustExistenceWhenNoDustIsPresent(void) {
   setVenvFrontDustStatus(false);
   CU_ASSERT_EQUAL(determineDustExistence(), false);
   resetTestCondition();
 }
 
-void testController(void) {
+void testControllerTurnLeftDecision(void) {
   setVenvObstaclesStatus(true, false, false);
   setVenvFrontDustStatus(false);
   controller();
   CU_ASSERT_EQUAL(callTurnLeft, true);
   resetTestCondition();
+}
 
+void testControllerTurnRightDecision(void) {
   setVenvObstaclesStatus(true, true, false);
   setVenvFrontDustStatus(false);
   controller();
   CU_ASSERT_EQUAL(callTurnRight, true);
   resetTestCondition();
+}
 
+void testControllerMoveBackwardAndTurnLeftDecision(void) {
   setVenvObstaclesStatus(true, true, true);
   setVenvFrontDustStatus(false);
   controller();
   CU_ASSERT_EQUAL(callMoveBackward, true);
   CU_ASSERT_EQUAL(callTurnLeft, true);
   resetTestCondition();
+}
 
+void testControllerPowerUpAndMoveForwardDecision(void) {
   setVenvObstaclesStatus(false, false, false);
   setVenvFrontDustStatus(true);
   controller();
   CU_ASSERT_EQUAL(callPowerUpAndMoveForward, true);
   resetTestCondition();
+}
 
+void testControllerMoveForwardDecision(void) {
   setVenvObstaclesStatus(false, false, false);
   setVenvFrontDustStatus(false);
   controller();
@@ -187,20 +197,30 @@ int main() {
     CU_cleanup_registry();
     return CU_get_error();
   }
-  if (CU_add_test(suiteDetermineDustExistence, "test of determineDustExistence",
-                  testDetermineDustExistence) == NULL) {
+  if ((CU_add_test(suiteDetermineDustExistence,
+                   "Test Dust Existence When Dust Is Present",
+                   testDetermineDustExistenceWhenDustIsPresent) == NULL) ||
+      (CU_add_test(suiteDetermineDustExistence,
+                   "Test Dust Existence When No Dust Is Present",
+                   testDetermineDustExistenceWhenNoDustIsPresent) == NULL)) {
     CU_cleanup_registry();
     return CU_get_error();
   }
 
   CU_pSuite suiteController =
       CU_add_suite("Suite_Controller", init_suite, clean_suite);
-  if (suiteController == NULL) {
-    CU_cleanup_registry();
-    return CU_get_error();
-  }
-  if (CU_add_test(suiteController, "test of controller", testController) ==
-      NULL) {
+  if ((CU_add_test(suiteController, "Test Controller Turn Left Decision",
+                   testControllerTurnLeftDecision) == NULL) ||
+      (CU_add_test(suiteController, "Test Controller Turn Right Decision",
+                   testControllerTurnRightDecision) == NULL) ||
+      (CU_add_test(suiteController,
+                   "Test Controller Move Backward and Turn Left Decision",
+                   testControllerMoveBackwardAndTurnLeftDecision) == NULL) ||
+      (CU_add_test(suiteController,
+                   "Test Controller Power Up and Move Forward Decision",
+                   testControllerPowerUpAndMoveForwardDecision) == NULL) ||
+      (CU_add_test(suiteController, "Test Controller Move Forward Decision",
+                   testControllerMoveForwardDecision) == NULL)) {
     CU_cleanup_registry();
     return CU_get_error();
   }
