@@ -25,7 +25,7 @@ typedef enum {
   POWER_OFF,
 } cleanerPowerOption;
 
-bool isTesting = false;
+bool isTesting = true;
 // initialize obstacles location and dust existence
 bool frontObstacle = false;
 bool leftObstacle = false;

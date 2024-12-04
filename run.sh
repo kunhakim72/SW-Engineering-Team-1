@@ -1,1 +1,1 @@
-./tc.out
+./unit_test.out

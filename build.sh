@@ -1,1 +1,1 @@
-gcc RVC_testcase.c -o tc.out 
+gcc RVC_Cunit_test.c -o unit_test.out -I/opt/homebrew/include -L/opt/homebrew/lib -lcunit
