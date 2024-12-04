@@ -1,6 +1,8 @@
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  gcc -o test_math_utils test_math_utils.c math_utils.c -lcunit
+  apt install libcunit1 libcunit1-doc libcunit1-dev gcc
+  gcc RVC_Cunit_test.c -o unit_test.out -L/usr/lib/x86_64-linux-gnu -lcunit
 elif [[ "$OSTYPE" == "darwin"* ]]; then
+  brew install cunit gcc
   gcc RVC_Cunit_test.c -o unit_test.out -I/opt/homebrew/include -L/opt/homebrew/lib -lcunit
 elif [[ "$OSTYPE" == "cygwin" || "$OSTYPE" == "msys" ]]; then
   echo "Windows are not supproted."
@@ -8,4 +10,4 @@ else
   echo "Unknown OS"
 fi
 
-./run.sh
+./unit_test.out
